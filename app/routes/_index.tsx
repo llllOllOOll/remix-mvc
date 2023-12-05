@@ -1,4 +1,6 @@
-import type { MetaFunction } from "@remix-run/node";
+import { json, type DataFunctionArgs, type MetaFunction } from "@remix-run/node";
+import { Form, useLoaderData } from "@remix-run/react";
+import { createUser, getUsers } from "~/db.server";
 
 export const meta: MetaFunction = () => {
   return [
@@ -7,8 +9,33 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+export async function loader(){
+  console.log(await getUsers())
+  return json(await getUsers()) 
+}
+
+export async function action({request}:DataFunctionArgs){
+  const formData = await request.formData()
+  const {username, email} =  Object.fromEntries(formData) 
+  console.log(username, email)
+  await createUser({
+    username:username as string,
+    email:email as string})
+  return null
+}
+
 export default function Index() {
+  const users = useLoaderData<typeof loader>()
   return (
-   <h1 className="text-center text-pink-500 font-bold">Remix MVC</h1>
+   <div>
+     <Form method="post">
+      <input type="text" name="username" placeholder="username" />
+      <input type="text" name="email" placeholder="email"/>
+      <button>Save</button>
+     </Form>
+     <ul>
+      {users.map((user)=><li key={user.id}>{user.username}</li>)}
+     </ul>
+   </div>
   );
 }
