@@ -1,29 +1,37 @@
-export type User = {
-    id?:string
-    username:string
-    email:string
-}
+// export type User = {
+//     id?:string
+//     username:string
+//     email:string
+// }
 
-const users : User[] = [
- {
-    id:'1',
-    username:'seven',
-    email:'seven@mail.com'
- }
-]
+import { PrismaClient } from "@prisma/client";
 
-export async function createUser(user:User){
-    const newUser : User = {
-        id:crypto.randomUUID(),
-        username:user.username,
-        email:user.email
-    } 
+// const users : User[] = [
+//  {
+//     id:'1',
+//     username:'seven',
+//     email:'seven@mail.com'
+//  }
+// ]
+
+// export async function createUser(user:User){
+//     const newUser : User = {
+//         id:crypto.randomUUID(),
+//         username:user.username,
+//         email:user.email
+//     } 
     
-    users.push(newUser)
-    return newUser
-}
+//     users.push(newUser)
+//     return newUser
+// }
 
 
-export const getUsers = async () =>{
-    return users 
+// export const getUsers = async () =>{
+//     return users 
+// }
+
+const prisma = new PrismaClient()
+
+export async function getUsers(){
+    return prisma.user.findMany()
 }
